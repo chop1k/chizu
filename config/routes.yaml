@@ -1,0 +1,5 @@
+token_create:
+  path: /token/create
+  controller: App\Controller\TokenController::create
+  defaults:
+    authentication: false
