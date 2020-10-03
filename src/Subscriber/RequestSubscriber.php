@@ -7,6 +7,7 @@ use App\Exception\InvalidTokenException;
 use App\Exception\NeedAuthenticationException;
 use App\Exception\ParseException;
 use App\Service\TokenService;
+use App\Service\ValidatorService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -18,11 +19,24 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
  */
 class RequestSubscriber implements EventSubscriberInterface
 {
+    /**
+     * Contains token service for interaction with tokens
+     *
+     * @var TokenService $token
+     */
     private TokenService $token;
 
-    public function __construct(TokenService $token)
+    /**
+     * Contains validation service which will validate request if need
+     *
+     * @var ValidatorService $validator
+     */
+    private ValidatorService $validator;
+
+    public function __construct(TokenService $token, ValidatorService $validatorService)
     {
         $this->token = $token;
+        $this->validator = $validatorService;
     }
 
     /**
@@ -43,9 +57,14 @@ class RequestSubscriber implements EventSubscriberInterface
             $this->parse($request);
         }
 
-        if ($request->attributes->get('authentication') !== false)
+        if ($request->attributes->get('authentication', true) === true)
         {
             $request->attributes->set('token', $this->token->handle($request));
+        }
+
+        if ($request->attributes->has('validator'))
+        {
+            $this->validator->validate($request);
         }
     }
 

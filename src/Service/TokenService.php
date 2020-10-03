@@ -54,12 +54,7 @@ class TokenService
             throw new InvalidTokenException($exception->getMessage(), 400, $exception);
         }
 
-        if (!$data instanceof Token)
-        {
-            throw new InvalidTokenException('Invalid token structure', 400);
-        }
-
-        return $token;
+        return Token::validate($data);
     }
 
     /**

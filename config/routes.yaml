@@ -3,3 +3,10 @@ token_create:
   controller: App\Controller\TokenController::create
   defaults:
     authentication: false
+    validator: App\Validator\Token\TokenCreateValidator
+
+token_identify:
+  path: /token/identify
+  controller: App\Controller\TokenController::identify
+  defaults:
+    validator: App\Validator\Token\TokenCreateValidator

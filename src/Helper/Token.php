@@ -2,8 +2,8 @@
 
 namespace App\Helper;
 
-use Carbon\Carbon;
-use Firebase\JWT\JWT;
+use App\Exception\InvalidTokenException;
+use ReflectionObject;
 
 /**
  * Class Token represents jwt token structure
@@ -145,5 +145,41 @@ class Token
     public function setApplicationId(int $applicationId): void
     {
         $this->applicationId = $applicationId;
+    }
+
+    public static function getProperties(): array
+    {
+        return [
+            'iat' => 'issuedAt',
+            'nbf' => 'notBefore',
+            'exp' => 'expire',
+            'accId' => 'accountId',
+            'appId' => 'applicationId'
+        ];
+    }
+
+    public static function validate(object $data): Token
+    {
+        $reflection = new ReflectionObject($data);
+
+        $properties = self::getProperties();
+
+        $token = new Token();
+
+        foreach ($reflection->getProperties() as $property)
+        {
+            $name = $property->name;
+
+            if (!isset($properties[$name]))
+            {
+                throw new InvalidTokenException('Invalid token structure', 400);
+            }
+
+            $method = 'set'.ucfirst($properties[$name]);
+
+            $token->$method($property->getValue($data));
+        }
+
+        return $token;
     }
 }
