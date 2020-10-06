@@ -3,8 +3,8 @@
 namespace App\Database\Postgres;
 
 use App\Database\Connection as ConnectionInterface;
+use App\Exception\BaseException;
 use App\Exception\QueryException;
-use Exception;
 
 /**
  * Class Connection represents connection wrapper for postgresql
@@ -43,7 +43,7 @@ class Connection implements ConnectionInterface
 
         if ($this->connection === false)
         {
-            throw new Exception(pg_last_error($this->connection));
+            throw new BaseException(pg_last_error($this->connection), 500);
         }
 
         $this->connected = true;
@@ -67,7 +67,7 @@ class Connection implements ConnectionInterface
     {
         if (!$this->isConnected())
         {
-            throw new Exception('Connection not established');
+            throw new BaseException('Connection not established', 500);
         }
 
         $res = pg_query($this->connection, $query);
@@ -212,5 +212,48 @@ class Connection implements ConnectionInterface
     public function setUser(string $name): void
     {
         $this->user = $name;
+    }
+
+    /**
+     * Shortcut for creating connection instance by environment
+     *
+     * @param int $type
+     * @return Connection
+     * @throws BaseException
+     */
+    public static function fromEnv(int $type): Connection
+    {
+        $connection = new Connection();
+
+        $connection->setHost($_ENV['DATABASE_HOST']);
+        $connection->setPort($_ENV['DATABASE_PORT']);
+        $connection->setDatabase($_ENV['DATABASE_NAME']);
+
+        if ($type === ConnectionInterface::Read)
+        {
+            $connection->setUser($_ENV['DATABASE_READ_USER']);
+            $connection->setPassword($_ENV['DATABASE_READ_PASSWORD']);
+        }
+        elseif ($type === ConnectionInterface::Insert)
+        {
+            $connection->setUser($_ENV['DATABASE_INSERT_USER']);
+            $connection->setPassword($_ENV['DATABASE_INSERT_PASSWORD']);
+        }
+        elseif ($type === ConnectionInterface::Update)
+        {
+            $connection->setUser($_ENV['DATABASE_UPDATE_USER']);
+            $connection->setPassword($_ENV['DATABASE_UPDATE_PASSWORD']);
+        }
+        elseif ($type === ConnectionInterface::Root)
+        {
+            $connection->setUser($_ENV['DATABASE_ROOT_USER']);
+            $connection->setPassword($_ENV['DATABASE_ROOT_PASSWORD']);
+        }
+        else
+        {
+            throw new BaseException('Unsupported connection type', 500);
+        }
+
+        return $connection;
     }
 }

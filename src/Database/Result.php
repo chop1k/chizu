@@ -24,9 +24,16 @@ interface Result
     public function all(): array;
 
     /**
-     * Returns one row consistently
+     * Returns true if last taken row is not last in result set
+     *
+     * @return bool
+     */
+    public function hasNext(): bool;
+
+    /**
+     * Returns next row in result set
      *
      * @return array
      */
-    public function getRow(): array;
+    public function getNext(): array;
 }

@@ -9,8 +9,9 @@ namespace App\Database;
  */
 interface Connection {
     public const Read = 1;
-    public const Write = 2;
-    public const Root = 3;
+    public const Insert = 2;
+    public const Update = 3;
+    public const Root = 4;
 
     /**
      * Returns raw connector
@@ -33,7 +34,7 @@ interface Connection {
      * Executes query
      *
      * @param string $query
-     * @return array|null
+     * @return Result
      */
     public function query(string $query): Result;
 

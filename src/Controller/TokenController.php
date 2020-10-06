@@ -61,6 +61,6 @@ class TokenController extends AbstractController
      */
     public function identify(): Response
     {
-        return $this->json([]);
+        return new Response('ok', 200);
     }
 }
