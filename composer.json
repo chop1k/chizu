@@ -1,0 +1,26 @@
+{
+  "name": "chop1k/chizu",
+  "description": "description",
+  "minimum-stability": "dev",
+  "type": "project",
+  "license": "MIT",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "chop1k",
+      "email": "fakeshopendesu@gmail.com",
+      "role": "developer"
+    }
+  ],
+  "require": {
+    "php": "^7.4",
+    "chizu/app": "dev-master",
+    "chizu/http-module": "dev-master",
+    "chizu/routing-module": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Chizu\\": "src/"
+    }
+  }
+}
