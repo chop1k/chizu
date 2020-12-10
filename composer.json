@@ -16,7 +16,8 @@
     "php": "^7.4",
     "chizu/app": "dev-master",
     "chizu/http-module": "dev-master",
-    "chizu/routing-module": "dev-master"
+    "chizu/routing-module": "dev-master",
+    "chizu/controller-module": "dev-master"
   },
   "autoload": {
     "psr-4": {
