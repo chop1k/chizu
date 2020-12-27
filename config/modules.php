@@ -1,13 +1,27 @@
 <?php
 
 use Chizu\Controller\ControllerModule;
+use Chizu\DI\Container;
+use Chizu\Event\Events;
 use Chizu\Http\HttpModule;
-use Chizu\Module\Modules;
 use Chizu\Routing\RoutingModule;
+use Ds\Map;
 
-return static function(Modules $modules): void
+/**
+ * This function defines modules.
+ *
+ * @param Map $modules
+ * Map for adding modules and passing to the module's constructor.
+ *
+ * @param Events $events
+ * Events instance required to be passed to the module's constructor.
+ *
+ * @param Container $container
+ * Container instance required to be passed to the module's constructor.
+ */
+return static function(Map $modules, Events $events, Container $container): void
 {
-    $modules->add('http', HttpModule::class);
-    $modules->add('routing', RoutingModule::class);
-    $modules->add('controller', ControllerModule::class);
+    $modules->put(HttpModule::class, new HttpModule($events, $container, $modules));
+    $modules->put(RoutingModule::class, new RoutingModule($events, $container, $modules));
+    $modules->put(ControllerModule::class, new ControllerModule($events, $container, $modules));
 };
